@@ -16,7 +16,7 @@ function scene:createScene( event )
 	local group = self.view
 
 	--Adiciona o background
-	local background = display.newImage("images/gameover.png")
+	local background = display.newImage("images/gameover3.png")
     background.x = _W/2
     background.y = _H/2
     group:insert(background) 

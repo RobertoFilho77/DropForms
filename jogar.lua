@@ -80,12 +80,12 @@ function scene:createScene(event)
   local function onLocalCollision( self, event )
     if event.phase =="began" then                      
       if formas_piloto.myName == forma.myName then                                            
-        timer.performWithDelay(10,move_formas,1)                        
+        timer.performWithDelay(5,move_formas,1)                        
         event.other:removeSelf()  
         atualizapontos("+", 10)                      
       end
       else                      
-        timer.performWithDelay(10,move_formas,1)                        
+        timer.performWithDelay(5,move_formas,1)                        
         --event.target:removeSelf()                        
         event.other:removeSelf()
         atualizapontos("-", 1)  
@@ -100,37 +100,39 @@ function scene:createScene(event)
         aux_formaspiloto = aux_formaspiloto + 1
       end
 
-      formas_piloto:removeEventListener( "collision" )
-      formas_piloto:removeEventListener("touch", tocar_formas_piloto)      
-      --formas_piloto:removeSelf()   
-      --formas_piloto.x = _W+200
-      --formas_piloto.y = _H+200
-      --formas_piloto = nil
-      --display.remove(formas_piloto)      
-
-      --local sorteioformas_piloto_posterior = math.random(9)
+      formas_piloto:removeEventListener("touch", tocar_formas_piloto)
+      formas_piloto:removeEventListener( "collision" )   
+      formas_piloto.x = _W * aux_formaspiloto
+      formas_piloto.y = _H* aux_formaspiloto 
+      formas_piloto:removeSelf()
+      formas_piloto = nil   
+      print("exclui")
 
       formas_piloto = display.newImage(forma_piloto[aux_formaspiloto])
       formas_piloto.x = _W/2
       formas_piloto.y = _H-80
       formas_piloto.myName = aux_formaspiloto
+      print("criou")
 
-      formas_piloto.collision = onLocalCollision
-      formas_piloto:addEventListener( "collision" ) 
       formas_piloto:addEventListener("touch", tocar_formas_piloto)
+      formas_piloto.collision = onLocalCollision 
+      formas_piloto:addEventListener( "collision")
+      print("adicinou colisão e toque")
 
       physics.addBody(formas_piloto, "static", { friction=0.5, bounce=0.3 } ) 
     end
   end
   formas_piloto:addEventListener("touch", tocar_formas_piloto)
-  formas_piloto.collision = onLocalCollision
-  formas_piloto:addEventListener( "collision" )  
+  formas_piloto.collision = onLocalCollision  
+  formas_piloto:addEventListener( "collision")
 
+  print("iniciou")
   move_formas( formas )
 end
 
 function goto_gameover()
   formas_piloto:removeEventListener("touch", tocar_formas_piloto)
+  formas_piloto:removeEventListener( "collision") 
   display.remove(fisica)
   display.remove(formas)
   display.remove(forma_piloto)
