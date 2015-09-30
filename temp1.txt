@@ -1,0 +1,56 @@
+  local  move_formas
+  local forma = {display.newImage(formas[math.random(9)])}
+  local numero = table.maxn(forma) 
+
+  local function onLocalCollision( self, event )
+    if ( event.phase == "began" ) then
+      forma[numero+1] = display.newImage(formas[math.random(9)])
+      print("print2",numero)
+      move_formas( formas )      
+    end
+  end
+
+   move_formas  = function( formas )
+    numero = table.maxn(forma)  
+    physics.addBody(forma[numero], { density=3.0, friction=0.5, bounce=0.3 } )
+
+    forma[numero].isSensor = false
+    forma[numero].x = _W/2
+    forma[numero].y = -100
+
+    forma[numero].collision = onLocalCollision
+    forma[numero]:addEventListener( "collision" )
+
+
+
+Temp 2
+
+  function formas_piloto:touch(event)    
+    if event.phase == "began" then
+      
+      local numerolocal = table.maxn(formas_piloto)
+
+      formas_piloto[numerolocal]:removeEventListener("touch", formas_piloto)
+      formas_piloto[numerolocal]:removeSelf()    
+      formas_piloto[numerolocal] = nil
+
+      local sorteioformas_piloto_posterior = math.random(9)
+
+      formas_piloto[numero + 1] = display.newImage(forma_piloto[sorteioformas_piloto_posterior])
+      formas_piloto[numero + 1].x = _W/2
+      formas_piloto[numero + 1].y = _H-80
+      formas_piloto[numero + 1].myName = sorteioformas_piloto_posterior
+
+      physics.addBody( formas_piloto[numero + 1], "static", { friction=0.5, bounce=0.3 } )
+
+      formas_piloto[table.maxn(formas_piloto)]:addEventListener("touch", formas_piloto)
+      formas_piloto[table.maxn(formas_piloto)].collision = onLocalCollision
+      formas_piloto[table.maxn(formas_piloto)]:addEventListener( "collision" )  
+
+      print(formas_piloto[table.maxn(formas_piloto)])
+    end
+  end
+  formas_piloto[table.maxn(formas_piloto)]:addEventListener("touch", formas_piloto)
+
+  formas_piloto[table.maxn(formas_piloto)].collision = onLocalCollision
+  formas_piloto[table.maxn(formas_piloto)]:addEventListener( "collision" )      
