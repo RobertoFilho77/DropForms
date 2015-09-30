@@ -38,28 +38,28 @@ physics.addBody(formas_piloto, "static", { friction=0.5, bounce=0.3 } )
 
 local pontos = 0
 local vidas = 5
-local display_pontuacao = display.newText(string.format("Pontuação: %04d", pontos), 240, -30, native.systemFontCalibri, 20)
+local display_pontuacao = display.newText(string.format("Pontos: %04d", pontos), 260, -30, native.systemFontCalibri, 20)
+local display_vidas = display.newText(string.format("Vidas Restantes: %d", vidas), 88, -30, native.systemFontCalibri, 20)
 
 
 function scene:createScene(event)
   local group = self.view
 
   local numero = 1
-  --local sorteioformas_piloto_inicial = math.random(9)
 
   function atualizapontos(operacao, valor)
     if operacao == "-" then
-      pontos = pontos - valor
-      display_pontuacao.text = string.format("Pontuação: %04d", pontos)
+      vidas = vidas - valor
+      display_vidas.text = string.format("Vidas Restantes: %d", vidas)
 
-      if (pontos <= 0) then  gameover() end 
+      if (vidas == 0) then  gameover() end 
     end
 
     if operacao == "+" then
       pontos = pontos + valor
-      display_pontuacao.text = string.format("Pontuação: %04d", pontos)
+      display_pontuacao.text = string.format("Pontos: %04d", pontos)
 
-      if (pontos <= 0) then  gameover() end
+      if (vidas == 0) then  gameover() end
     end
   end
 
@@ -88,7 +88,7 @@ function scene:createScene(event)
         timer.performWithDelay(10,move_formas,1)                        
         --event.target:removeSelf()                        
         event.other:removeSelf()
-        atualizapontos("-", 5)  
+        atualizapontos("-", 1)  
       end
   end
 
@@ -100,12 +100,11 @@ function scene:createScene(event)
         aux_formaspiloto = aux_formaspiloto + 1
       end
 
-      print(aux_formaspiloto)
       formas_piloto:removeEventListener( "collision" )
       formas_piloto:removeEventListener("touch", tocar_formas_piloto)      
       --formas_piloto:removeSelf()   
-      formas_piloto.x = _W+200
-      formas_piloto.y = _H+200
+      --formas_piloto.x = _W+200
+      --formas_piloto.y = _H+200
       --formas_piloto = nil
       --display.remove(formas_piloto)      
 
@@ -121,8 +120,6 @@ function scene:createScene(event)
       formas_piloto:addEventListener("touch", tocar_formas_piloto)
 
       physics.addBody(formas_piloto, "static", { friction=0.5, bounce=0.3 } ) 
-
-      print("terminou touch")
     end
   end
   formas_piloto:addEventListener("touch", tocar_formas_piloto)
@@ -141,6 +138,7 @@ function goto_gameover()
   display.remove(ground)
   display.remove(formas_piloto)
   display.remove(display_pontuacao)
+  display.remove(display_vidas)
   display.remove(forma) 
   display.remove(sorteioformas_piloto_posterior)
   storyboard.gotoScene("gameover")
