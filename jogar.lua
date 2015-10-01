@@ -10,13 +10,13 @@ fisica.start()
 _W = display.contentWidth 
 _H = display.contentHeight
 
-local formas = {"images/triangulovermelho.png", "images/trianguloazul.png","images/trianguloverde.png",
-                    "images/circulovermelho.png", "images/circuloazul.png", "images/circuloverde.png",
-                    "images/quadradovermelho.png", "images/quadradoazul.png", "images/quadradoverde.png"}
+local formas = {"images/triangulovermelho30x30.png", "images/trianguloazul30x30.png","images/trianguloverde30x30.png",
+                    "images/circulovermelho30x30.png", "images/circuloazul30x30.png", "images/circuloverde30x30.png",
+                    "images/quadradovermelho30x30.png", "images/quadradoazul30x30.png", "images/quadradoverde30x30.png"}
 
-local forma_piloto = {"images/triangulovermelho.png", "images/trianguloazul.png","images/trianguloverde.png",
-                    "images/circulovermelho.png", "images/circuloazul.png", "images/circuloverde.png",
-                    "images/quadradovermelho.png", "images/quadradoazul.png", "images/quadradoverde.png"}                    
+local forma_piloto = {"images/triangulovermelho30x30.png", "images/trianguloazul30x30.png","images/trianguloverde30x30.png",
+                    "images/circulovermelho30x30.png", "images/circuloazul30x30.png", "images/circuloverde30x30.png",
+                    "images/quadradovermelho30x30.png", "images/quadradoazul30x30.png", "images/quadradoverde30x30.png"}                    
 
 
 --Adiciona o background
