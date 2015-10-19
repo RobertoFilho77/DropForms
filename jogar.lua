@@ -9,14 +9,16 @@ _W = display.contentWidth
 _H = display.contentHeight
 
 function gameover()
-  physics.pause()   
-  --formas_piloto:removeSelf()
+  fisica.pause()  
+  formas_piloto:removeSelf()
+  formas_piloto = nil 
+  display:remove(fisica)
   composer.gotoScene("gameover", transicaoCena)
   print("terminou gameover")
 end
 
 function scene:create( event ) 
-  local selfGroup = self.view
+  selfGroup = self.view
 
   local background = display.newImage("images/background2.jpg")
   background.x = _W/2
@@ -25,7 +27,7 @@ function scene:create( event )
 
   local ground = display.newImage( "images/ground.png", _W/2, _H+20 )
   ground.myName = "ground"
-  physics.addBody( ground, "static", { friction=0.5, bounce=0.3 } )
+  fisica.addBody( ground, "static", { friction=0.5, bounce=0.3 } )
   selfGroup:insert(ground)
 
   print("Criou imagens background")
@@ -45,11 +47,11 @@ function scene:create( event )
   print("Criou vetores")
 
   local aux_formaspiloto = 1
-  local formas_piloto = display.newImage(forma_piloto[aux_formaspiloto])
+  formas_piloto = display.newImage(forma_piloto[aux_formaspiloto])
   formas_piloto.x = _W/2
   formas_piloto.y = _H-80
   formas_piloto.myName = aux_formaspiloto
-  physics.addBody(formas_piloto, "static", { friction=0.5, bounce=0.3 } )
+  fisica.addBody(formas_piloto, "static", { friction=0.5, bounce=0.3 } )
 
   local pontos = 0
   local vidas = 2
@@ -60,39 +62,21 @@ function scene:create( event )
 
   local numero = 1
 
-  function atualizapontos(operacao, valor)
-    if operacao == "-" then
-      vidas = vidas - valor
-      display_vidas.text = string.format("Vidas Restantes: %d", vidas)
-
-      print("chamou -")
-      if (vidas == 0) then  gameover() end 
-    end
-
-    if operacao == "+" then
-      pontos = pontos + valor
-      display_pontuacao.text = string.format("Pontos: %04d", pontos)
-
-      print("chamou +")
-      if (vidas == 0) then  gameover() end
-    end
-  end 
-
-  local function onLocalCollision( self, event )
+  function onLocalCollision( self, event )
     if event.phase =="began" then                      
       if formas_piloto.myName == forma.myName then                                            
-        timer.performWithDelay(1,move_formas,1)                        
+        --timer.performWithDelay(1,move_formas,1)                        
         event.other:removeSelf()  
         print("colidiu correto")
         atualizapontos("+", 10)                      
       end
-      else                      
-        timer.performWithDelay(1,move_formas,1)                        
-        --event.target:removeSelf()                        
-        event.other:removeSelf()
-        print("colidiu errado")
-        atualizapontos("-", 1)  
-      end
+    else                      
+      --timer.performWithDelay(1,move_formas,1)                        
+      --event.target:removeSelf()                        
+      event.other:removeSelf()
+      print("colidiu errado")
+      atualizapontos("-", 1)  
+    end
   end   
 
   function tocar_formas_piloto(event)    
@@ -123,7 +107,7 @@ function scene:create( event )
       formas_piloto:addEventListener( "collision")
       print("adicinou colisão e toque")
 
-      physics.addBody(formas_piloto, "static", { friction=0.5, bounce=0.3 } ) 
+      fisica.addBody(formas_piloto, "static", { friction=0.5, bounce=0.3 } ) 
     end
   end
 
@@ -140,11 +124,28 @@ function scene:create( event )
     forma.y = -100
     forma.myName = sorteiroforma
 
-    physics.addBody(forma, { density=5.0, friction=0.5, bounce=0.3 } ) 
+    fisica.addBody(forma, { density=5.0, friction=0.5, bounce=0.3 } ) 
     
-    print("adcionou toque e colisao inicial") 
-    
+    print("adcionou toque e colisao inicial")    
   end
+
+  function atualizapontos(operacao, valor)
+    if operacao == "-" then
+      vidas = vidas - valor
+      display_vidas.text = string.format("Vidas Restantes: %d", vidas)
+
+      print("chamou -")
+      if (vidas == 0) then  gameover() else timer.performWithDelay(1,move_formas,1) end 
+    end
+
+    if operacao == "+" then
+      pontos = pontos + valor
+      display_pontuacao.text = string.format("Pontos: %04d", pontos)
+
+      print("chamou +")
+      if (vidas == 0) then  gameover() else timer.performWithDelay(1,move_formas,1) end
+    end
+  end   
 
   print("iniciou")
   move_formas(formas)
