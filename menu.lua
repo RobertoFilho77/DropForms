@@ -22,6 +22,14 @@ function scene:create( event )
   start.yScale = 0.4	
   group:insert(start)
 
+  --local circle = display.newCircle( 50, 50, 100 )
+  --circle:setFillColor( 0, 1, 0 )
+  --local function moveCircle( event )
+  --    circle.x = event.x
+  --    circle.y = event.y
+  --end
+  --Runtime:addEventListener( "touch", moveCircle )  
+
   local function start_game()
     composer.gotoScene("jogar", transicaoCena)
   end

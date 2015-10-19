@@ -10,9 +10,6 @@ _H = display.contentHeight
 
 function gameover()
   fisica.pause()  
-  formas_piloto:removeSelf()
-  formas_piloto = nil 
-  display:remove(fisica)
   composer.gotoScene("gameover", transicaoCena)
   print("terminou gameover")
 end
@@ -29,8 +26,6 @@ function scene:create( event )
   ground.myName = "ground"
   fisica.addBody( ground, "static", { friction=0.5, bounce=0.3 } )
   selfGroup:insert(ground)
-
-  print("Criou imagens background")
   
   local formas = {"images/triangulovermelho30x30.png", "images/trianguloazul30x30.png","images/trianguloverde30x30.png",
                   "images/circulovermelho30x30.png", "images/circuloazul30x30.png", "images/circuloverde30x30.png",
@@ -44,17 +39,27 @@ function scene:create( event )
                           "images/circulovermelho8x8.png", "images/circuloazul8x8.png", "images/circuloverde8x8.png",
                           "images/quadradovermelho8x8.png", "images/quadradoazul8x8.png", "images/quadradoverde8x8.png"} 
 
-  print("Criou vetores")
-
-  local aux_formaspiloto = 1
+  local aux_formaspiloto = 2
   formas_piloto = display.newImage(forma_piloto[aux_formaspiloto])
   formas_piloto.x = _W/2
   formas_piloto.y = _H-80
   formas_piloto.myName = aux_formaspiloto
   fisica.addBody(formas_piloto, "static", { friction=0.5, bounce=0.3 } )
 
+  formas_piloto_proximo = display.newImage(formas_selecao[aux_formaspiloto + 1])
+  formas_piloto_proximo.x = _W/2
+  formas_piloto_proximo.y = _H-80
+  formas_piloto_proximo.myName = aux_formaspiloto
+  selfGroup:insert(formas_piloto_proximo)
+
+  formas_piloto_anterior = display.newImage(formas_selecao[aux_formaspiloto - 1])
+  formas_piloto_anterior.x = _W/2
+  formas_piloto_anterior.y = _H-80
+  formas_piloto_anterior.myName = aux_formaspiloto
+  selfGroup:insert(formas_piloto_anterior)  
+
   local pontos = 0
-  local vidas = 2
+  local vidas = 100
   local display_pontuacao = display.newText(string.format("Pontos: %04d", pontos), 260, -30, native.systemFontCalibri, 20)
   selfGroup:insert(display_pontuacao)
   local display_vidas = display.newText(string.format("Vidas Restantes: %d", vidas), 88, -30, native.systemFontCalibri, 20)  
@@ -81,6 +86,7 @@ function scene:create( event )
 
   function tocar_formas_piloto(event)    
     if event.phase == "began" then  
+      
       if (aux_formaspiloto == table.maxn(forma_piloto)) then
         aux_formaspiloto = 1
       else
@@ -101,6 +107,34 @@ function scene:create( event )
       formas_piloto.myName = aux_formaspiloto
       print("criou")
       selfGroup:insert(formas_piloto)
+
+      formas_piloto_proximo:removeSelf()
+      formas_piloto_proximo = nil
+      
+      if (aux_formaspiloto == table.maxn(forma_piloto)) then
+        formas_piloto_proximo = display.newImage(formas_selecao[1])
+      else
+        formas_piloto_proximo = display.newImage(formas_selecao[aux_formaspiloto + 1])
+      end
+
+      formas_piloto_proximo.x = _W/2
+      formas_piloto_proximo.y = _H-55
+      formas_piloto_proximo.myName = aux_formaspiloto
+      selfGroup:insert(formas_piloto_proximo)
+
+      formas_piloto_anterior:removeSelf()
+      formas_piloto_anterior = nil
+      
+      if (aux_formaspiloto == 1) then
+        formas_piloto_anterior = display.newImage(formas_selecao[table.maxn(forma_piloto)])
+      else
+        formas_piloto_anterior = display.newImage(formas_selecao[aux_formaspiloto - 1])
+      end
+
+      formas_piloto_anterior.x = _W/2
+      formas_piloto_anterior.y = _H-85
+      formas_piloto_anterior.myName = aux_formaspiloto
+      selfGroup:insert(formas_piloto_anterior)
 
       formas_piloto:addEventListener("touch", tocar_formas_piloto)
       formas_piloto.collision = onLocalCollision 
