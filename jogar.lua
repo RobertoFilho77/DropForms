@@ -10,9 +10,42 @@ _H = display.contentHeight
 
 function gameover()
   fisica.pause()  
+  composer.removeScene( "jogar" )
   composer.gotoScene("gameover", transicaoCena)
   print("terminou gameover")
 end
+
+--[[function checkSwipeDirection()
+    local distance =  endSwipeX - beginSwipeX
+    if distance < 0 then
+        if (math.floor(spriteInstance.x) == math.floor(_POSITION_PERSON_CENTER)) then 
+            transition.to( spriteInstance, { x =  _POSITION_PERSON_LEFT,  time=400 } )
+        elseif (math.floor(spriteInstance.x) == math.floor(_POSITION_PERSON_RIGHT)) then                 
+            transition.to( spriteInstance, { x =  _POSITION_PERSON_CENTER,  time=400 } )
+        end
+
+        print("Esquerda")
+    elseif distance > 0 then
+        if (math.floor(spriteInstance.x) == math.floor(_POSITION_PERSON_LEFT)) then 
+            transition.to( spriteInstance, { x =  _POSITION_PERSON_CENTER,  time=400 } )    
+        elseif (math.floor(spriteInstance.x) == math.floor(_POSITION_PERSON_CENTER)) then    
+            transition.to( spriteInstance, { x =  _POSITION_PERSON_RIGHT,  time=400 } )
+        end
+        print("Direita")
+    else
+        print("Apenas clicou")
+    end
+end
+
+local swipe = function (event)
+    if event.phase == "began" then
+        beginSwipeX = event.x
+    end
+    if event.phase == "ended" then
+        endSwipeX = event.x
+        checkSwipeDirection()
+    end
+end--]]
 
 function scene:create( event ) 
   selfGroup = self.view
@@ -59,7 +92,7 @@ function scene:create( event )
   selfGroup:insert(formas_piloto_anterior)  
 
   local pontos = 0
-  local vidas = 100
+  local vidas = 5
   local display_pontuacao = display.newText(string.format("Pontos: %04d", pontos), 260, -30, native.systemFontCalibri, 20)
   selfGroup:insert(display_pontuacao)
   local display_vidas = display.newText(string.format("Vidas Restantes: %d", vidas), 88, -30, native.systemFontCalibri, 20)  
@@ -142,6 +175,7 @@ function scene:create( event )
       print("adicinou colisão e toque")
 
       fisica.addBody(formas_piloto, "static", { friction=0.5, bounce=0.3 } ) 
+      --formas_piloto:addEventListener("touch", swipe)
     end
   end
 
@@ -180,6 +214,8 @@ function scene:create( event )
       if (vidas == 0) then  gameover() else timer.performWithDelay(1,move_formas,1) end
     end
   end   
+
+  --formas_piloto:addEventListener("touch", swipe)  
 
   print("iniciou")
   move_formas(formas)

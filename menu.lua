@@ -32,6 +32,7 @@ function scene:create( event )
 
   local function start_game()
     composer.gotoScene("jogar", transicaoCena)
+    composer.removeScene("menu")
   end
 
   start:addEventListener("tap", start_game)
