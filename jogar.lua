@@ -5,6 +5,8 @@ local scene = composer.newScene()
 local fisica = require("physics")
 fisica.start()  
 
+local aux_formaspiloto = 2
+
 _W = display.contentWidth 
 _H = display.contentHeight
 
@@ -14,38 +16,6 @@ function gameover()
   composer.gotoScene("gameover", transicaoCena)
   print("terminou gameover")
 end
-
---[[function checkSwipeDirection()
-    local distance =  endSwipeX - beginSwipeX
-    if distance < 0 then
-        if (math.floor(spriteInstance.x) == math.floor(_POSITION_PERSON_CENTER)) then 
-            transition.to( spriteInstance, { x =  _POSITION_PERSON_LEFT,  time=400 } )
-        elseif (math.floor(spriteInstance.x) == math.floor(_POSITION_PERSON_RIGHT)) then                 
-            transition.to( spriteInstance, { x =  _POSITION_PERSON_CENTER,  time=400 } )
-        end
-
-        print("Esquerda")
-    elseif distance > 0 then
-        if (math.floor(spriteInstance.x) == math.floor(_POSITION_PERSON_LEFT)) then 
-            transition.to( spriteInstance, { x =  _POSITION_PERSON_CENTER,  time=400 } )    
-        elseif (math.floor(spriteInstance.x) == math.floor(_POSITION_PERSON_CENTER)) then    
-            transition.to( spriteInstance, { x =  _POSITION_PERSON_RIGHT,  time=400 } )
-        end
-        print("Direita")
-    else
-        print("Apenas clicou")
-    end
-end
-
-local swipe = function (event)
-    if event.phase == "began" then
-        beginSwipeX = event.x
-    end
-    if event.phase == "ended" then
-        endSwipeX = event.x
-        checkSwipeDirection()
-    end
-end--]]
 
 function scene:create( event ) 
   selfGroup = self.view
@@ -59,7 +29,13 @@ function scene:create( event )
   ground.myName = "ground"
   fisica.addBody( ground, "static", { friction=0.5, bounce=0.3 } )
   selfGroup:insert(ground)
+
+  --[[local diretorios = {"triangulo", "circulo", "quadrado"}
+
+  local cores {"vermelho", "azul", "verde"}
   
+  local formas = "30x30.png"]]
+
   local formas = {"images/triangulovermelho30x30.png", "images/trianguloazul30x30.png","images/trianguloverde30x30.png",
                   "images/circulovermelho30x30.png", "images/circuloazul30x30.png", "images/circuloverde30x30.png",
                   "images/quadradovermelho30x30.png", "images/quadradoazul30x30.png", "images/quadradoverde30x30.png"}
@@ -72,7 +48,6 @@ function scene:create( event )
                           "images/circulovermelho8x8.png", "images/circuloazul8x8.png", "images/circuloverde8x8.png",
                           "images/quadradovermelho8x8.png", "images/quadradoazul8x8.png", "images/quadradoverde8x8.png"} 
 
-  local aux_formaspiloto = 2
   formas_piloto = display.newImage(forma_piloto[aux_formaspiloto])
   formas_piloto.x = _W/2
   formas_piloto.y = _H-80
@@ -102,15 +77,12 @@ function scene:create( event )
 
   function onLocalCollision( self, event )
     if event.phase =="began" then                      
-      if formas_piloto.myName == forma.myName then                                            
-        --timer.performWithDelay(1,move_formas,1)                        
+      if formas_piloto.myName == forma.myName then                                                                
         event.other:removeSelf()  
         print("colidiu correto")
         atualizapontos("+", 10)                      
       end
-    else                      
-      --timer.performWithDelay(1,move_formas,1)                        
-      --event.target:removeSelf()                        
+    else                                          
       event.other:removeSelf()
       print("colidiu errado")
       atualizapontos("-", 1)  
@@ -118,17 +90,14 @@ function scene:create( event )
   end   
 
   function tocar_formas_piloto(event)    
-    if event.phase == "began" then  
-      
+    if event.phase == "ended" then       
       if (aux_formaspiloto == table.maxn(forma_piloto)) then
         aux_formaspiloto = 1
-      else
-        aux_formaspiloto = aux_formaspiloto + 1
       end
 
       print("aux_formaspiloto ", aux_formaspiloto)
 
-      formas_piloto:removeEventListener("touch", tocar_formas_piloto)
+      formas_piloto:removeEventListener("touch", swipe)
       formas_piloto:removeEventListener( "collision" )   
       formas_piloto:removeSelf()
       formas_piloto = nil   
@@ -169,13 +138,12 @@ function scene:create( event )
       formas_piloto_anterior.myName = aux_formaspiloto
       selfGroup:insert(formas_piloto_anterior)
 
-      formas_piloto:addEventListener("touch", tocar_formas_piloto)
+      formas_piloto:addEventListener("touch", swipe)
       formas_piloto.collision = onLocalCollision 
       formas_piloto:addEventListener( "collision")
       print("adicinou colisão e toque")
 
       fisica.addBody(formas_piloto, "static", { friction=0.5, bounce=0.3 } ) 
-      --formas_piloto:addEventListener("touch", swipe)
     end
   end
 
@@ -215,16 +183,46 @@ function scene:create( event )
     end
   end   
 
-  --formas_piloto:addEventListener("touch", swipe)  
-
   print("iniciou")
   move_formas(formas)
   selfGroup:insert(forma)
   selfGroup:insert(formas_piloto)
   
-  formas_piloto:addEventListener("touch", tocar_formas_piloto)
+  formas_piloto:addEventListener("touch", swipe)
   formas_piloto.collision = onLocalCollision  
   formas_piloto:addEventListener( "collision") 
+end
+
+function checkSwipeDirection(event)
+    local distance =  endSwipeX - beginSwipeX
+    if distance < -2 then
+        if aux_formaspiloto == 1 then
+          aux_formaspiloto = 6--table.maxn(forma_piloto)
+        else
+          aux_formaspiloto = aux_formaspiloto - 1
+        end
+        tocar_formas_piloto(event)
+        print("Esquerda")
+    elseif distance > 2 then
+        aux_formaspiloto = aux_formaspiloto + 1
+        tocar_formas_piloto(event)
+        print("Direita")
+    else
+        print("Apenas Toque")
+        distance = 0
+    end
+
+    distance = 0
+end
+
+function swipe (event)
+    if event.phase == "began" then
+        beginSwipeX = event.x
+    end
+    if event.phase == "ended" then
+        endSwipeX = event.x
+        checkSwipeDirection(event)
+    end
 end
 
 function scene:show( event )

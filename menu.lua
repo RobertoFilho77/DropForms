@@ -20,7 +20,7 @@ function scene:create( event )
   start.y = _H/2 + 220
   start.xScale = 0.4
   start.yScale = 0.4	
-  group:insert(start)
+  group:insert(start)   
 
   --local circle = display.newCircle( 50, 50, 100 )
   --circle:setFillColor( 0, 1, 0 )
