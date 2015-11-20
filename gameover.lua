@@ -16,19 +16,27 @@ end
 function scene:create( event )
 	local group = self.view
 
-	--Adiciona o background
-	--local background = display.newImage("images/gameover3.png")
-	--background.x = _W/2
-	--background.y = _H/2
-	--group:insert(background) 
+  --Adiciona o background
+  local background = display.newImage("images/background_gameover.png")
+  background.x = _W/2
+  background.y = _H/2
+  group:insert(background)  
 
 	--background:addEventListener("touch", fechar_tela)
 
 
-	texto = display.newText("GAME OVER", _W/2, _H/2, "Digital-7", 50)  
-	continue = display.newText("Touch to continue", _W/2, _H/2+100, "Digital-7", 30) 
+  --Adiciona o background
+  local background = display.newImage("images/gameover.png")
+  background.x = _W-160
+  background.y = _H-270
+  group:insert(background)  
 
-	continue:addEventListener("touch", fechar_tela) 
+    --Adiciona o touch to continue
+  local touch_continue = display.newImage("images/touch_continue.png")
+  touch_continue.x = _W-160
+  touch_continue.y = _H-200
+  touch_continue:addEventListener("touch", fechar_tela) 
+  group:insert(touch_continue)  
 end
 
 function scene:show( event )
